@@ -132,6 +132,16 @@ let ComileUtil = {
         new watcher(vm, attrValue, (newValue, oldValue) => {
             node.innerHTML = newValue
         })
+    },
+    // 解析 v-model 指令
+    model (node, vm, attrValue) {
+        node.value = vm.$data[attrValue]
+
+        // 注册事件
+        node.addEventListener('input', e => vm.$data[attrValue] = event.target.value)
+        
+        new watcher(vm, attrValue, (newValue, oldValue) => {
+            node.value = newValue
+        })
     }
-    //处理v-model
 }
