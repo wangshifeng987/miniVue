@@ -41,6 +41,10 @@ export class Compile {
                 //解析文本节点
                 this.compileText(node)
             }
+              // 如果是元素(标签),需要解析指令
+              if(this.isElementNode(node)) {
+                this.compileElement(node)
+            }
             //如果当前节点还有子节点,递归判断
             if(node.childNodes && node.childNodes.length > 0){
                 this.compile(node)
@@ -57,6 +61,18 @@ export class Compile {
     isTextNode(node){
         return node.nodeType === 3
     }
+    //判断是不是元素节点
+    isElementNode(node){
+        return node.nodeType === 1
+    }
+    //判断是不是指令
+    isDirective(attrName){
+        return attrName.startsWith('v-')  //判断是不是v-开头
+    }
+    //判断是不是事件指令 v-on
+    isEventDirective(type){
+        return type.split(':')[0]==='on'
+    }
     //解析文本节点
     compileText(node){
         let txt = node.textContent
@@ -72,6 +88,46 @@ export class Compile {
             })
         }
     }
+    //解析元素(标签)节点
+    compileElement(node){
+        //指令:html一个以v开头的属性
+        //获取当前节点下得到所有属性
+        let attributes = node.attributes  //类数组
+        this.toArray(attributes).forEach(attr=>{
+            let attrName = attr.name
+            //解析vue指令(v-开头)
+            if(this.isDirective(attr.nodeName)){
+                //从索引2处开始截取字符串   
+                let type = attrName.slice(2)
+                //获取属性的值
+                let attrValue=attr.value
+                //判断是不是v-on
+                if(this.isEventDirective(type)){
+                    //事件类型                 
+                    let eventType = type.split(':')[1]
+                    //给节点添加事件
+                    node.addEventListener(eventType,this.vm.$methods[attrValue].bind(this.vm))
+                }else{
+                    //其他指令
+                    ComileUtil[type](node,this.vm,attrValue)
+                }
+            }
+        })
+    }
    
-    
+}
+//解析其他指令
+let ComileUtil = {
+        
+    //处理text指令
+    text(node, vm, attrValue) {
+        node.textContent = vm.$data[attrValue]
+        new watcher(vm, attrValue, (newValue,oldValue) => {
+            node.textContent = newValue
+        })
+    }
+
+    //处理v-html
+
+    //处理v-model
 }

@@ -13,7 +13,6 @@ export class Dep{
     //通知订阅者
     notify(){
         this.subs.forEach(sub=>{
-            console.log(sub)
            sub.update()})     
     }
 }

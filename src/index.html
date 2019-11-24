@@ -10,12 +10,14 @@
     <div id="app">
 
         <h1>大家好，这是迷你版Vue的示例代码</h1>
-        
         <hr />
-        
         <p>年龄：{{age}}</p>
-
         <hr />
+        <h3> 测试 v-text：</h3>
+        <p v-text='msg'></p>
+        <hr />
+        <h3>😁 测试 v-on:click 点击事件：</h3>
+        <button v-on:click="clickTest">点击年龄+1</button>
 
 
     </div>
