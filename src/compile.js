@@ -116,7 +116,7 @@ export class Compile {
     }
 
 }
-//解析其他指令
+//解析其他 指令
 let ComileUtil = {
 
     //处理text指令
